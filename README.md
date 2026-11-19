@@ -4,6 +4,13 @@ Autonomous YouTube playback verification suite featuring anti-fingerprinting ste
 
 ---
 
+## Video Demonstration
+
+A complete product walkthrough demonstrating proxy connectivity tests, 144p dynamic stream throttling, real-time telemetry, and verified view counters is included in the repository:
+- Video File: [demo/CORETERON_YOUTUBE_SUITE_DEMO.mp4](demo/CORETERON_YOUTUBE_SUITE_DEMO.mp4) (720p HD, 53s, 3.6 MB)
+
+---
+
 ## 5-Minute Quick Setup
 
 ### Step 1: Clone Repository
@@ -143,6 +150,7 @@ coreteron_yt_bot/
 |-- runner.py              # Concurrency manager and CLI entry point
 |-- run_demo.py            # Automated verification test script
 |-- proxies.txt            # Optional proxy list file
+|-- demo/                  # Product video demonstration (MP4)
 |-- templates/index.html   # Web dashboard user interface
 |-- static/                # Dashboard stylesheets and client script
 |-- Start_Mac.command      # 1-Click macOS launcher script
