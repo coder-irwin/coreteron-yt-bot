@@ -35,19 +35,47 @@ HEADLESS=false
 
 #### Option A: 1-Click Launchers
 - **macOS**: Double-click `Start_Mac.command` (or run `bash Start_Mac.command`).
+- **Linux**: Run `bash Start_Linux.sh`.
 - **Windows**: Double-click `Start_Windows.bat`.
 
-#### Option B: Terminal Setup
-```bash
-# Create and activate virtual environment
-python3 -m venv .venv
-source .venv/bin/activate       # On Windows: .venv\Scripts\activate
+#### Option B: Terminal Setup by Operating System
 
-# Install dependencies and Playwright Chromium
+**macOS:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
+python app.py
+```
 
-# Launch the Web Application
+**Linux (Ubuntu / Debian / RHEL):**
+```bash
+# On Ubuntu/Debian ensure Python venv is installed:
+# sudo apt update && sudo apt install -y python3-venv python3-pip
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium
+python app.py
+```
+
+**Windows (Command Prompt):**
+```cmd
+python -m venv .venv
+call .venv\Scripts\activate.bat
+pip install -r requirements.txt
+playwright install chromium
+python app.py
+```
+
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+playwright install chromium
 python app.py
 ```
 
@@ -118,6 +146,7 @@ coreteron_yt_bot/
 |-- templates/index.html   # Web dashboard user interface
 |-- static/                # Dashboard stylesheets and client script
 |-- Start_Mac.command      # 1-Click macOS launcher script
+|-- Start_Linux.sh         # 1-Click Linux launcher script
 |-- Start_Windows.bat      # 1-Click Windows launcher script
 |-- requirements.txt       # Python dependencies
 |-- .env.example           # Environment variables template
