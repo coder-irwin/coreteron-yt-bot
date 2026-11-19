@@ -12,52 +12,73 @@ echo ==================================================================
 echo     CORETERON YOUTUBE VIEW SUITE - AUTONOMOUS INSTALLER (WINDOWS)
 echo ==================================================================
 
-REM 1. Check for Python
+REM 1. Detect Python Interpreter
+set "PYTHON_CMD="
+
 python --version >nul 2>&1
-if %errorlevel% neq 0 (
+if %errorlevel% equ 0 set "PYTHON_CMD=python"
+
+if "%PYTHON_CMD%"=="" (
     py --version >nul 2>&1
-    if %errorlevel% equ 0 (
-        set PYTHON_CMD=py
-    ) else (
-        echo [!] Python is not detected on your system.
-        echo [*] Attempting automated Python 3 installation via PowerShell...
-        powershell -Command "Write-Host 'Downloading Python installer...'; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe' -OutFile 'python_setup.exe'; Write-Host 'Installing Python (please wait)...'; Start-Process -FilePath 'python_setup.exe' -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; Remove-Item 'python_setup.exe'"
-        python --version >nul 2>&1
-        if %errorlevel% neq 0 (
-            echo [-] Automated installer finished, but Python is not yet in current session PATH.
-            echo [!] Please restart this file or download Python from https://www.python.org/downloads/
-            echo [!] Ensure you check: 'Add python.exe to PATH'
-            pause
-            exit /b 1
-        )
-        set PYTHON_CMD=python
-    )
-) else (
-    set PYTHON_CMD=python
+    if %errorlevel% equ 0 set "PYTHON_CMD=py"
 )
 
-echo [+] Python detected:
-%PYTHON_CMD% --version
+if "%PYTHON_CMD%"=="" (
+    if exist "%LocalAppData%\Programs\Python\Python311\python.exe" set "PYTHON_CMD=%LocalAppData%\Programs\Python\Python311\python.exe"
+    if exist "%LocalAppData%\Programs\Python\Python312\python.exe" set "PYTHON_CMD=%LocalAppData%\Programs\Python\Python312\python.exe"
+    if exist "C:\Program Files\Python311\python.exe" set "PYTHON_CMD=C:\Program Files\Python311\python.exe"
+    if exist "C:\Program Files\Python312\python.exe" set "PYTHON_CMD=C:\Program Files\Python312\python.exe"
+)
 
-REM 2. Create Virtual Environment
+REM 2. Auto-Install Python 3.11 if completely missing (no admin rights needed)
+if "%PYTHON_CMD%"=="" (
+    echo [!] Python is not detected on your system.
+    echo [*] Downloading and installing Python 3.11 automatically...
+    powershell -Command "Write-Host 'Downloading Python 3.11...'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe' -OutFile 'python_setup.exe'; Write-Host 'Installing Python 3.11...'; Start-Process -FilePath 'python_setup.exe' -ArgumentList '/quiet InstallAllUsers=0 PrependPath=1 Include_pip=1 Include_test=0' -Wait; Remove-Item 'python_setup.exe'"
+    
+    if exist "%LocalAppData%\Programs\Python\Python311\python.exe" (
+        set "PYTHON_CMD=%LocalAppData%\Programs\Python\Python311\python.exe"
+    ) else if exist "C:\Program Files\Python311\python.exe" (
+        set "PYTHON_CMD=C:\Program Files\Python311\python.exe"
+    ) else (
+        python --version >nul 2>&1
+        if %errorlevel% equ 0 set "PYTHON_CMD=python"
+    )
+)
+
+if "%PYTHON_CMD%"=="" (
+    echo [-] Python installation could not be completed automatically.
+    echo [!] Please install Python manually from https://www.python.org/downloads/
+    echo [!] Ensure you check: 'Add python.exe to PATH'
+    pause
+    exit /b 1
+)
+
+echo [+] Python interpreter detected:
+"%PYTHON_CMD%" --version
+
+REM 3. Create Isolated Virtual Environment
 if not exist ".venv" (
     echo [+] Creating isolated virtual environment (.venv)...
-    %PYTHON_CMD% -m venv .venv
+    "%PYTHON_CMD%" -m venv .venv
 )
 
-REM 3. Activate Virtual Environment
-call .venv\Scripts\activate.bat
+REM 4. Locate Virtual Environment Executables
+set "VENV_PYTHON=.venv\Scripts\python.exe"
+if not exist "%VENV_PYTHON%" (
+    set "VENV_PYTHON=%PYTHON_CMD%"
+)
 
-REM 4. Install / Update Dependencies
+REM 5. Install / Update Dependencies
 echo [+] Installing all required packages from requirements.txt...
-python -m pip install -q --upgrade pip setuptools wheel
-python -m pip install -q -r requirements.txt
+"%VENV_PYTHON%" -m pip install -q --upgrade pip setuptools wheel
+"%VENV_PYTHON%" -m pip install -q -r requirements.txt
 
-REM 5. Install Playwright Chromium Browser
-echo [+] Installing Playwright Chromium browser...
-python -m playwright install chromium
+REM 6. Install Playwright Chromium Browser
+echo [+] Installing Playwright Chromium browser binary...
+"%VENV_PYTHON%" -m playwright install chromium
 
-REM 6. Ensure .env exists
+REM 7. Ensure .env exists
 if not exist ".env" (
     if exist ".env.example" (
         echo [+] Copying .env.example to .env...
@@ -65,12 +86,16 @@ if not exist ".env" (
     )
 )
 
-REM 7. Launch Dashboard and Open Browser
+REM 8. Launch Dashboard and Open Browser
 echo ==================================================================
 echo [+] Launching Web Dashboard at http://127.0.0.1:5055 ...
 echo ==================================================================
 
 start "" "http://127.0.0.1:5055"
-python app.py
+"%VENV_PYTHON%" app.py
 
-pause
+if %errorlevel% neq 0 (
+    echo.
+    echo [-] Application stopped with an exit code: %errorlevel%
+    pause
+)
