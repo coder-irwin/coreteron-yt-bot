@@ -1,0 +1,14 @@
+# ==============================================================================
+# CORETERON PROXY CONFIGURATION FILE
+# ==============================================================================
+# Add your proxies below (one proxy per line).
+#
+# Supported formats:
+# 1. Standard IP:Port
+# 2. IP:Port:User:Password
+# 3. http://user:pass@host:port
+#
+# NOTE: Leave this file empty for Direct Local Connection Mode.
+# Direct mode is recommended for live client demonstrations on your Mac.
+# For production scale (10,000 views), enter authenticated Rotating Residential Proxies.
+# ==============================================================================

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coreteron YouTube View Automation Suite</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Top Navigation -->
+        <header class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-logo">C</div>
+                <div class="brand-text">
+                    <h1>Coreteron Automation Labs</h1>
+                    <span class="subtext">YouTube Playback Verification &amp; Scaling Suite</span>
+                </div>
+            </div>
+            <div class="nav-status">
+                <span class="status-indicator online"></span>
+                <span class="status-label" id="global-status-label">System Ready</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-body">
+            <!-- Metrics Row -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-title">Views Target</span>
+                    <span class="metric-value" id="stat-target">0</span>
+                    <span class="metric-sub" id="stat-progress">0 completed</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Verified Views</span>
+                    <span class="metric-value accent" id="stat-verified">0</span>
+                    <span class="metric-sub" id="stat-rate">0% success rate</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Bandwidth Saved</span>
+                    <span class="metric-value success" id="stat-bandwidth">0 MB</span>
+                    <span class="metric-sub">Via 144p Dynamic Optimization</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Campaign State</span>
+                    <span class="metric-value" id="stat-state">IDLE</span>
+                    <span class="metric-sub" id="stat-timer">Ready to launch</span>
+                </div>
+            </section>
+
+            <!-- Workspace Two-Column Grid -->
+            <div class="workspace-grid">
+                <!-- Left: Configuration Form -->
+                <div class="card form-card">
+                    <div class="card-header">
+                        <h2>Campaign Configuration</h2>
+                        <p class="subtitle">Set parameters for high-concurrency stealth playback verification.</p>
+                    </div>
+
+                    <form id="form-campaign">
+                        <div class="form-group">
+                            <label for="cfg-url">Target YouTube Video URL <span class="required">*</span></label>
+                            <input type="text" id="cfg-url" value="{{ default_target_url }}" required>
+                            <span class="field-hint">Defaults to Coreteron client showcase video.</span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cfg-views">Target Views</label>
+                                <input type="number" id="cfg-views" value="{{ default_target_views }}" min="1" max="10000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-concurrency">Concurrency (Workers)</label>
+                                <input type="number" id="cfg-concurrency" value="{{ default_concurrency }}" min="1" max="20" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cfg-min-watch">Min Watch (Seconds)</label>
+                                <input type="number" id="cfg-min-watch" value="{{ default_min_watch }}" min="30" max="300" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-max-watch">Max Watch (Seconds)</label>
+                                <input type="number" id="cfg-max-watch" value="{{ default_max_watch }}" min="30" max="300" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cfg-gateway">Rotating Proxy Gateway (Optional)</label>
+                            <div class="input-with-button">
+                                <input type="text" id="cfg-gateway" placeholder="http://user:pass@gate.smartproxy.com:7000" value="{{ default_proxy_gateway }}">
+                                <button type="button" class="btn btn-secondary" id="btn-test-proxy">Test</button>
+                            </div>
+                            <span class="field-hint" id="proxy-test-status">Supports Smartproxy, Webshare, or SOCKS5 backconnect endpoints.</span>
+                        </div>
+
+                        <div class="options-box">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="cfg-144p" checked>
+                                <div class="checkbox-text">
+                                    <strong>144p Dynamic Bandwidth Optimization (Recommended)</strong>
+                                    <p>Forces video stream to tiny DASH chunks, saving ~88% of residential proxy data.</p>
+                                </div>
+                            </label>
+                            <label class="checkbox-label" style="margin-top: 0.5rem;">
+                                <input type="checkbox" id="cfg-headless">
+                                <div class="checkbox-text">
+                                    <strong>Headless Execution Mode (Cloud VPS Only)</strong>
+                                    <p>Leave unchecked for visible browser window demonstration.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="button-row">
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-start">
+                                <span>Launch View Campaign</span>
+                            </button>
+                            <button type="button" class="btn btn-danger" id="btn-stop" style="display: none;">
+                                <span>Stop Campaign</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right: Live Execution Feed & Telemetry -->
+                <div class="card feed-card">
+                    <div class="card-header flex-header">
+                        <div>
+                            <h2>Real-Time Telemetry Feed</h2>
+                            <p class="subtitle">Live streaming worker events and view validations.</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline" id="btn-clear-feed">Clear</button>
+                    </div>
+
+                    <div class="terminal-window" id="terminal-feed">
+                        <div class="log-entry info">
+                            <span class="log-time">[00:00:00]</span>
+                            <span class="log-tag">[SYSTEM]</span>
+                            <span class="log-msg">Coreteron YouTube Automation Engine online. Configure parameters and click Launch.</span>
+                        </div>
+                    </div>
+
+                    <div class="feed-footer">
+                        <div class="footer-metric">
+                            <span class="footer-label">Anti-Detection:</span>
+                            <span class="footer-val">ACTIVE (WebDriver stripped, WebGL spoofed)</span>
+                        </div>
+                        <div class="footer-metric">
+                            <span class="footer-label">Audit Engine:</span>
+                            <span class="footer-val">30s+ Heartbeat Verification</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
