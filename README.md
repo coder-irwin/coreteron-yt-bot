@@ -11,7 +11,29 @@ A complete product walkthrough demonstrating proxy connectivity tests, 144p dyna
 
 ---
 
-## 5-Minute Quick Setup
+## 1-Click Autonomous Setup (Zero Technical Expertise)
+
+No manual Python configuration, environment activation, or package commands are required. The automated setup script detects your operating system, configures Python, creates the isolated virtual environment, installs all dependencies and browser binaries, and opens the Web Dashboard in your default browser.
+
+### Windows
+- Double-click **`setup_and_run.bat`** (or `Start_Windows.bat`).
+- If Python is not installed, the script will automatically download and install Python 3.11 with PATH enabled.
+
+### macOS
+- Double-click **`Start_Mac.command`** or open Terminal and run:
+  ```bash
+  ./setup_and_run.sh
+  ```
+
+### Linux (Ubuntu, Debian, Fedora, Arch)
+- Open Terminal in the repository folder and run:
+  ```bash
+  ./setup_and_run.sh
+  ```
+
+---
+
+## Manual Developer Setup (Optional)
 
 ### Step 1: Clone Repository
 ```bash
@@ -41,9 +63,9 @@ HEADLESS=false
 ### Step 3: Install Dependencies and Launch
 
 #### Option A: 1-Click Launchers
-- **macOS**: Double-click `Start_Mac.command` (or run `bash Start_Mac.command`).
-- **Linux**: Run `bash Start_Linux.sh`.
-- **Windows**: Double-click `Start_Windows.bat`.
+- **macOS**: Double-click `Start_Mac.command` (or run `./setup_and_run.sh`).
+- **Linux**: Run `./setup_and_run.sh`.
+- **Windows**: Double-click `setup_and_run.bat`.
 
 #### Option B: Terminal Setup by Operating System
 
